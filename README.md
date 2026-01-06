@@ -53,6 +53,48 @@ tessera "duckdb:///data/buildings.db?table=buildings"
 - DuckDB spatial extension must be installed (`INSTALL spatial`)
 - Table must exist and contain a geometry column
 
+## Preparing Data
+
+Tile serving requires geometries in EPSG:3857 (Web Mercator) projection and benefits from an R-tree spatial index for efficient tile queries. The index allows DuckDB to quickly filter geometries intersecting each tile's bounding box.
+
+This example creates a tiled database from the latest Overture Maps building data for New York City:
+
+```sql
+install spatial;
+load spatial;
+
+-- attach to latest Overture Maps data (read-only)
+attach 'https://labs.overturemaps.org/data/latest.ddb' as overture (read_only);
+
+-- create local database for tiling
+attach 'tiles.db';
+use tiles;
+
+create or replace table buildings as (
+  select
+    -- transform into Web Mercator for tile serving
+    st_transform(geometry, 'EPSG:4326', 'EPSG:3857', always_xy := true) as geometry,
+    subtype,
+    class,
+    height,
+  from
+    overture.building
+  where
+    -- extent of New York City
+    bbox.xmin between -74.2 and -73.6 and bbox.ymin between 40.5 and 40.9
+    and bbox.xmax between -74.2 and -73.6
+    and bbox.ymax between 40.5 and 40.9
+);
+
+-- create spatial index for efficient tile queries
+create index buildings_idx on buildings using rtree (geometry);
+
+use memory.main;
+detach tiles;
+```
+
+The R-tree index is critical for performance—without it, each tile request would scan the entire table.
+
 ## API
 
 ### `source.getTile(z, x, y, callback)`
