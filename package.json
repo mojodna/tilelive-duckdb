@@ -1,0 +1,22 @@
+{
+  "name": "tilelive-duckdb",
+  "version": "0.1.0",
+  "description": "A tilelive source for serving vector tiles from DuckDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "tilelive",
+    "duckdb",
+    "vector-tiles",
+    "mvt"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "@duckdb/node-api": "^1.4.3-r.2"
+  },
+  "peerDependencies": {
+    "@mapbox/tilelive": "^5.0.0 || ^6.0.0"
+  }
+}
