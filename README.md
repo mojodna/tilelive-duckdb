@@ -2,6 +2,8 @@
 
 A [tilelive](https://github.com/mapbox/tilelive) source for serving [Mapbox Vector Tiles](https://docs.mapbox.com/data/tilesets/guides/vector-tiles-introduction/) from [DuckDB](https://duckdb.org/) tables with spatial data.
 
+This project was inspired by and derived from [Maxxen's DuckDB MVT gist](https://gist.github.com/Maxxen/37e4a9f8595ea5e6a20c0c8fbbefe955).
+
 ## Installation
 
 ```bash
